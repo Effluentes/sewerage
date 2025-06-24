@@ -1,0 +1,17 @@
+{
+    "name": "sewerage/sewerage-dev-container",
+    "image": "golang:1",
+    "appPort": [
+    ],
+    "remoteUser": "root",
+    "mounts": [
+        // replace with your local path to the repo
+        "source=C:\\Users\\haven\\Desktop\\Effluentes\\sewerage,target=/fpwork/Effluentes/sewerage,type=bind"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+            ]
+        }
+    }
+}

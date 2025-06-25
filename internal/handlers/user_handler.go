@@ -28,42 +28,61 @@ package handlers
 
 import (
 	"sewerage/internal/infrastructure/server"
-	"sewerage/internal/application/controller"
+	"sewerage/internal/domain/dto"
+	"sewerage/internal/domain/controller"
+	"sewerage/internal/domain/repositories"
+	"sewerage/internal/domain/services"
 	"log/slog"
 	"net/http"
+    "encoding/json"
 )
-
 type UserHandler struct {
-	controller controller.UserController
+	userController *controller.UserController
+}
+
+func NewUserHandler(userController *controller.UserController) *UserHandler {
+	return &UserHandler{userController: userController}
 }
 
 func CombineUserHandlers() *server.HTTPServer {
 	userEndpoint := server.NewHTTPServer()
 
 	// Inicjalizacja zależności
-	// userRepo := repository.NewUserRepository(db)
-	// userService := service.NewUserService(userRepo)
-	// userController := controller.NewUserController(userService)
-	// userHandler := handler.NewUserHandler(userController)
+	// userRepo := repositories.NewUserRepository(db)
+	userRepo := repositories.NewUserRepository()
+	userService := services.NewUserService(userRepo)
+	userController := controller.NewUserController(userService)
+	userHandler := NewUserHandler(userController)
 
 	// Mapowanie metod
 	combinedHandler := server.NewMethodHandler(
-		server.WithGet(getUser),
-		server.WithPost(createUser),
+		server.WithGet(userHandler.getUser),
+		server.WithPost(userHandler.createUser),
 	)
 
 	userEndpoint.HandleFunc("/user", combinedHandler)
 	return userEndpoint
 }
 
-func getUser(w http.ResponseWriter, r *http.Request) {
-	slog.Info("Handle userGet")
+func (userHandler *UserHandler) getUser(w http.ResponseWriter, r *http.Request) {
+	slog.Debug("Handle getUser")
 	w.Write([]byte("GET handler for /default"))
 }
 
-func createUser(w http.ResponseWriter, r *http.Request) {
-	slog.Info("Handle userPost")
-	w.Write([]byte("POST handler for /default"))
+func (userHandler *UserHandler) createUser(w http.ResponseWriter, r *http.Request) {
+	slog.Debug("Handle createUser")
+
+    var req dto.CreateUserRequest
+    if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		slog.Info("decoded failed")
+		return
+    }
+	if err := userHandler.userController.CreateUser(&req); err != nil {
+		return
+	}
+	slog.Debug("CreateUser")
+	w.WriteHeader(http.StatusCreated)
+	w.Write([]byte("Success"))
 }
 
 //==========================

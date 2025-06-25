@@ -2,16 +2,19 @@ package repositories
 
 import (
 	"errors"
-	"database/sql"
+	// "database/sql"
 	"sewerage/internal/domain/entities"
 )
 
 type UserRepository struct {
-	db *sql.DB
+	// db *sql.DB
 }
 
-func NewUserRepository(db *sql.DB) *UserRepository {
-	return &UserRepository{db: db}
+// func NewUserRepository(db *sql.DB) *UserRepository {
+// 	return &UserRepository{db: db}
+// }
+func NewUserRepository() *UserRepository {
+	return &UserRepository{}
 }
 
 func (repository *UserRepository) GetByEmail(emial string) (*entities.User, error) {

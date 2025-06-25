@@ -6,10 +6,10 @@ import (
 )
 
 type UserService struct {
-	userRepo repositories.UserRepository
+	userRepo *repositories.UserRepository
 }
 
-func NewUserService(repo repositories.UserRepository) *UserService {
+func NewUserService(repo *repositories.UserRepository) *UserService {
 	return &UserService{userRepo: repo}
 }
 
@@ -21,9 +21,8 @@ func NewUserService(repo repositories.UserRepository) *UserService {
 //     return &models.User{Email: userEntity.Email}, nil
 // }
 
-func (service *UserService) CreateUser(user *models.User) (models.User, error) {
-    createdUser := models.User{Email: "test@tee.com",}
-    return createdUser, nil
+func (service *UserService) CreateUser(user *models.User) error {
+    return nil
 }
 
 // func (service *UserService) CreateUser(user *models.User) (error) {
